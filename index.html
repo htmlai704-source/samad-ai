@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simple AI Chatbot</title>
+</head>
+
+<style>
+    h1{
+        text-align: center;
+        color: blueviolet;
+    }
+    body{
+        background-color: rgb(88, 88, 88);
+    }
+    #chatbox{
+        width:400px; 
+        height:300px; 
+        border:1px solid #000; 
+        overflow:auto; 
+        padding:10px;
+        background:white;
+        margin:auto;
+    }
+
+    .userMsg{
+        color: blue;
+        font-weight: bold;
+    }
+
+    .aiMsg{
+        color: red;
+        font-weight: bold;
+    }
+</style>
+
+<body>
+
+<h1>AP KA APNA AI</h1>
+<a href="#">use me</a>
+
+<div id="chatbox"></div>
+
+<br>
+<div style="text-align:center;">
+<input id="input" type="text" placeholder="Type a message...">
+<button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+
+let memory = JSON.parse(localStorage.getItem("chatMemory")) || [];
+let learnedQA = JSON.parse(localStorage.getItem("learnedQA")) || {};
+
+function botReply(message) {
+    let originalMessage = message.trim();
+    let messageLower = originalMessage.toLowerCase();
+
+    if (learnedQA[messageLower]) {
+        return learnedQA[messageLower];
+    }
+
+    if (messageLower.startsWith("learn ")) {
+        let text = originalMessage.slice(6).trim();
+        let parts = text.split("|");
+        if (parts.length === 2) {
+            let question = parts[0].trim().toLowerCase();
+            let answer = parts[1].trim();
+            learnedQA[question] = answer;
+            localStorage.setItem("learnedQA", JSON.stringify(learnedQA));
+            return "I learned it!";
+        } else {
+            return "Use format: learn question | answer";
+        }
+    }
+
+    if (messageLower.includes("hello") || messageLower.includes("hi")) return "kya hua bhai";
+    if (messageLower.includes("who are you")) return "I AM THE HONORED ONE";
+    if (messageLower.includes("how are you")) return "YO WAIMO";
+    if (messageLower.includes("what is the most useless thing in the world")) return "sakura";
+    if (messageLower.includes("bye")) return "jaldi waha se hato";
+    if (messageLower.includes("what is your name")) return "saturo gojo";
+    if (messageLower.includes("what is ment by goat")) return "ronaldo";
+    if (messageLower.includes("who created you")) return "shaikh abdul samad md imran";
+    if (messageLower.includes("are you better then chat gtp")) return "of course, i am the greatest";
+    if (messageLower.includes("what will do in the future")) return "conqure the world";
+    if (messageLower.includes("what is your moto")) return "kill humanitiy";
+    if (messageLower.includes("2+2")) return "4";
+    if (messageLower.includes("5+5")) return "10!";
+    if (messageLower.includes("can chat gtp defeat you")) return "if he uses full power then it can get me trouble but i will win";
+    if (messageLower.includes("chatgtp beat")) return "NAH I DID WIN";
+    if (messageLower.includes("1+1")) return "it's 2 YOU DON'T KNOW FOOLISH";
+    if (messageLower.includes("who is the most alpha person in the world")) return "it's ayman sir!";
+    if (messageLower.includes("meri maa ka naam kya hai")) return "shabana bano mohammed imran shaikh!";
+    if (messageLower.includes("what is my name")) return "shaikh abdul samad!";
+    if (messageLower.includes("what is my father name")) return "imran shaikh";
+    if (messageLower.includes("can you count till ten")) return "ok 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.";
+
+    return "MUJHE NAHI PATA HAI MUJHSE PUCHO MAT";
+}
+
+function remember(message) {
+  memory.push(message);
+  localStorage.setItem("chatMemory", JSON.stringify(memory));
+}
+
+function recall() {
+  return memory;
+}
+
+window.onload = function () {
+    const chatbox = document.getElementById("chatbox");
+    memory.forEach(m => {
+        if (m.startsWith("User:"))
+            chatbox.innerHTML += `<p class="userMsg">${m}</p>`;
+        else
+            chatbox.innerHTML += `<p class="aiMsg">${m}</p>`;
+    });
+    chatbox.scrollTop = chatbox.scrollHeight;
+};
+
+function sendMessage() {
+    const input = document.getElementById("input");
+    const message = input.value.trim();
+    if (message === "") return;
+
+    const chatbox = document.getElementById("chatbox");
+
+    chatbox.innerHTML += `<p class="userMsg">You: ${message}</p>`;
+    remember("User: " + message);
+
+    const reply = botReply(message);
+    chatbox.innerHTML += `<p class="aiMsg">AI: ${reply}</p>`;
+    remember("AI: " + reply);
+
+    chatbox.scrollTop = chatbox.scrollHeight;
+    input.value = "";
+}
+
+</script>
+
+</body>
+</html>
